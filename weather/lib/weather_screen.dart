@@ -1,14 +1,13 @@
-import 'package:flutter/foundation.dart';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:intl/intl.dart';
-
+import 'package:country_codes/country_codes.dart';
 import 'package:weather/weather_time_tile.dart';
 
-const apiKey = '2f9215cf2add5c2c341067c93bd088ba';
+const apiKey = '2f9215cf2add5c2c341067c93bd088ba'; //From openweathermap.org
 
 class WeatherScreen extends StatefulWidget {
   final bool isDarkMode;
@@ -20,9 +19,6 @@ class WeatherScreen extends StatefulWidget {
 }
 
 class _WeatherScreenState extends State<WeatherScreen> {
-  String formattedTime = DateFormat('H:mm').format(_now);
-  String formattedDay = DateFormat('E').format(_now);
-
   String _locationLocality = '';
   String _locationCountry = '';
 
@@ -35,11 +31,20 @@ class _WeatherScreenState extends State<WeatherScreen> {
   @override
   void initState() {
     super.initState();
-    _now = DateTime.now();
+    _initializeCountryCodes();
+  }
+
+  Future<void> _initializeCountryCodes() async {
+    try {
+      await CountryCodes.init();
+    } catch (e) {
+      print('Failed to initialize CountryCodes: $e');
+    }
     _getCurrentLocation();
   }
 
   Future<void> _getCurrentLocation() async {
+    //Method to get the Current location Using Geolocated for Services and permissions
     bool serviceEnabled;
     LocationPermission permission;
 
@@ -79,13 +84,17 @@ class _WeatherScreenState extends State<WeatherScreen> {
 
     setState(() {
       _locationLocality = '${placemark.locality}';
-      _locationCountry = '${placemark.country}';
+      //To get Country Code
+      final countryDetails = CountryCodes.detailsForLocale(
+          Locale.fromSubtags(countryCode: placemark.isoCountryCode));
+      _locationCountry = countryDetails?.alpha2Code ?? '';
     });
 
     _fetchWeather(position.latitude, position.longitude);
   }
 
   Future<void> _fetchWeather(double lat, double lon) async {
+    //Method which fetches current weather from openweathermap and updates the current
     final url =
         'http://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lon&appid=$apiKey&units=metric';
     final response = await http.get(Uri.parse(url));
@@ -108,6 +117,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
   }
 
   Future<void> _fetchForecast(double lat, double lon) async {
+    //used to fetch the forecase and store it in forecasts
     final url =
         'http://api.openweathermap.org/data/2.5/forecast?lat=$lat&lon=$lon&appid=$apiKey&units=metric';
     final response = await http.get(Uri.parse(url));
@@ -118,6 +128,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
 
       for (var item in data) {
         forecasts.add(WeatherForecast(
+          //WeatherForecast is a user created Widget to create an UI (in app above 5 day forecast title)
           time: item['dt_txt'].toString().substring(11, 16),
           temperature: item['main']['temp'].toString(),
           humidity: item['main']['humidity'].toString(),
@@ -138,7 +149,6 @@ class _WeatherScreenState extends State<WeatherScreen> {
 
   @override
   Widget build(BuildContext context) {
-    String _locationCont = _locationCountry.substring(0, 2);
     double screenRatio = MediaQuery.of(context).size.aspectRatio;
     return Column(
       children: [
@@ -152,7 +162,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                        '${_locationCont.toUpperCase()} | ${_locationLocality}',
+                        '${_locationCountry.toUpperCase()} | ${_locationLocality}',
                         style: TextStyle(fontSize: 30)),
                     Text(
                       _weatherDescription,
@@ -225,6 +235,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
+              //forecast in _forecastData and for each forecast it creates a widget (Similiar to json mapping)
               children: _forecastData
                   .map((forecast) => WeatherTimeTile(
                         time: forecast.time,
@@ -259,7 +270,24 @@ class _WeatherScreenState extends State<WeatherScreen> {
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [Text('Wed'), Icon(Icons.cloud), Text('26°C')],
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    'Wed',
+                    style: TextStyle(letterSpacing: 2),
+                  ),
+                  Text(
+                    '9:00',
+                    style: TextStyle(fontSize: 12),
+                  ),
+                ],
+              ),
+              Icon(Icons.cloud),
+              Text('26°C')
+            ],
           ),
         ),
       ],
@@ -267,6 +295,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
   }
 
   IconData _getWeatherIcon(String weatherDescription) {
+    //This method returns the appropriate Icons for the given weather
     switch (weatherDescription.toLowerCase()) {
       case 'thunderstorm':
         return Icons.cloud_circle;

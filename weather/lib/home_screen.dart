@@ -46,35 +46,38 @@ class HomeScreen extends StatelessWidget {
           iconTheme: IconThemeData(color: Colors.amber),
         ),
         drawer: Drawer(
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: <Widget>[
-              ListTile(
-                leading: Icon(Icons.history),
-                title: Text('History'),
-                onTap: () {
-                  Navigator.pop(context); // Close the drawer
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => History(
-                        isDarkMode: isDarkMode,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 50),
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: <Widget>[
+                ListTile(
+                  leading: Icon(Icons.history),
+                  title: Text('History'),
+                  onTap: () {
+                    Navigator.pop(context); // Close the drawer
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => History(
+                          isDarkMode: isDarkMode,
+                        ),
                       ),
-                    ),
-                  );
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.dark_mode),
-                title: Text('Dark mode'),
-                trailing: Switch(
-                  value: isDarkMode,
-                  onChanged: (value) {
-                    onToggleDarkMode();
+                    );
                   },
                 ),
-              ),
-            ],
+                ListTile(
+                  leading: Icon(Icons.dark_mode),
+                  title: Text('Dark mode'),
+                  trailing: Switch(
+                    value: isDarkMode,
+                    onChanged: (value) {
+                      onToggleDarkMode();
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
         body: WeatherScreen(
