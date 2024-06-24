@@ -5,12 +5,14 @@ class WeatherTimeTile extends StatelessWidget {
   final String temperature;
   final String prob;
   final String wind;
+  final bool isDarkMode;
 
   const WeatherTimeTile({
     required this.time,
     required this.temperature,
     required this.prob,
     required this.wind,
+    required this.isDarkMode,
   });
 
   @override
@@ -24,7 +26,7 @@ class WeatherTimeTile extends StatelessWidget {
         width: screenRatio * 270,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(screenRatio * 60),
-          color: Colors.black87,
+          color: isDarkMode ? Color(0xFF1E1F21) : Color(0xFFB0BCC8),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,

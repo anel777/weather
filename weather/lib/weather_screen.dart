@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:weather/weather_time_tile.dart';
 
 class WeatherScreen extends StatelessWidget {
+  final bool isDarkMode;
+
+  WeatherScreen({required this.isDarkMode});
   @override
   Widget build(BuildContext context) {
     double screenRatio = MediaQuery.of(context).size.aspectRatio;
@@ -29,14 +32,17 @@ class WeatherScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Text('34°', style: TextStyle(fontSize: screenRatio * 160)),
-                  Icon(Icons.cloud, size: screenRatio * 165),
+                  Icon(
+                    Icons.cloud,
+                    size: screenRatio * 165,
+                  ),
                 ],
               ),
               SizedBox(height: 12),
               Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(screenRatio * 40),
-                  color: Colors.black87,
+                  color: isDarkMode ? Color(0xFF23282B) : Color(0xFFB0BCC8),
                 ),
                 padding: EdgeInsets.all(screenRatio * 60),
                 child: Row(
@@ -85,30 +91,40 @@ class WeatherScreen extends StatelessWidget {
             child: Row(
               children: [
                 WeatherTimeTile(
-                    time: '09:00 AM',
-                    temperature: '38°',
-                    prob: '57%',
-                    wind: '5km/h'),
+                  time: '09:00 AM',
+                  temperature: '38°',
+                  prob: '57%',
+                  wind: '5km/h',
+                  isDarkMode: isDarkMode,
+                ),
                 WeatherTimeTile(
-                    time: '12:00 PM',
-                    temperature: '33°',
-                    prob: '59%',
-                    wind: '9km/h'),
+                  time: '12:00 PM',
+                  temperature: '33°',
+                  prob: '59%',
+                  wind: '9km/h',
+                  isDarkMode: isDarkMode,
+                ),
                 WeatherTimeTile(
-                    time: '04:00 PM',
-                    temperature: '34°',
-                    prob: '52%',
-                    wind: '2km/h'),
+                  time: '04:00 PM',
+                  temperature: '34°',
+                  prob: '52%',
+                  wind: '2km/h',
+                  isDarkMode: isDarkMode,
+                ),
                 WeatherTimeTile(
-                    time: '04:00 PM',
-                    temperature: '34°',
-                    prob: '46%',
-                    wind: '14km/h'),
+                  time: '06:00 PM',
+                  temperature: '34°',
+                  prob: '46%',
+                  wind: '14km/h',
+                  isDarkMode: isDarkMode,
+                ),
                 WeatherTimeTile(
-                    time: '04:00 PM',
-                    temperature: '34°',
-                    prob: '29%',
-                    wind: '2km/h'),
+                  time: '09:00 PM',
+                  temperature: '34°',
+                  prob: '29%',
+                  wind: '2km/h',
+                  isDarkMode: isDarkMode,
+                ),
               ],
             ),
           ),
@@ -119,6 +135,33 @@ class WeatherScreen extends StatelessWidget {
               color: Colors.amber,
               fontWeight: FontWeight.bold,
               letterSpacing: 2),
+        ),
+        SizedBox(
+          height: 12,
+        ),
+        Container(
+          height: 50,
+          decoration: BoxDecoration(
+            color: isDarkMode ? Color(0xFF1E1F21) : Color(0xFFB0BCC8),
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20.0),
+              topRight: Radius.circular(20.0),
+            ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Column(
+                children: [
+                  Text('Wed'),
+                  Text('9 AM'),
+                ],
+              ),
+              Icon(Icons.cloudy_snowing),
+              Text('26'),
+              Text('5km/h')
+            ],
+          ),
         ),
       ],
     );
