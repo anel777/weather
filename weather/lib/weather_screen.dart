@@ -7,7 +7,7 @@ import 'dart:convert';
 import 'package:country_codes/country_codes.dart';
 import 'package:weather/weather_time_tile.dart';
 
-const apiKey = '2f9215cf2add5c2c341067c93bd088ba'; //From openweathermap.org
+const apiKey = 'YOU_API_KEY'; //From openweathermap.org
 
 class WeatherScreen extends StatefulWidget {
   final bool isDarkMode;
